@@ -6,6 +6,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_library(util STATIC
         virtual_arena/virtual_arena.c
+        file_loader/file_loader.c
 )
 target_include_directories(util PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/..

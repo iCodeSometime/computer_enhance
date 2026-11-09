@@ -2,6 +2,10 @@
 #include <unistd.h>
 
 #include "virtual_arena.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "../preamble.h"
 
 static size_t get_page_count(size_t size) {
@@ -70,6 +74,17 @@ void* allocate_bytes(virtual_arena* arena, const size_t size, const size_t align
     arena->current_address = allocation_end;
 
     return granted_address;
+}
+
+void reclaim_bytes(virtual_arena* arena, const size_t size, void* expected_address) {
+#ifndef RELEASE
+    if (arena->current_address - size != expected_address) {
+        fprintf(stderr, "Invalid reclamation of bytes - attempted to reclaim %zu, but the expected resulting address was incorrect\n", size);
+        exit(1);
+    }
+#endif
+
+    arena->current_address = expected_address;
 }
 
 void destroy_arena(virtual_arena* arena) {

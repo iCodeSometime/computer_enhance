@@ -14,6 +14,10 @@ typedef int16_t i16;
 typedef int32_t i32;
 typedef int64_t i64;
 
+#define GB(count) 1024ULL * MB(count)
+#define MB(count) 1024ULL * KB(count)
+#define KB(count) 1024ULL * count
+
 static inline uptr align_up(uptr value, uptr alignment) {
     return (value + alignment - 1) & ~(alignment - 1);
 }

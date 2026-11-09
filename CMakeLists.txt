@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 project(computer_enhance_lessons C)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_compile_options(
         -Wall
         -Wextra
-        -Wpedantic
-        -Wno-gnu-pointer-arith
         -g
 )
 
@@ -14,6 +15,7 @@ add_subdirectory(part-1/1-instruction-decoding)
 
 add_executable(tests
     tests.c
+    part-1/1-instruction-decoding/instruction_set/parse_instructions.c
 )
 target_link_libraries(tests PRIVATE
     util

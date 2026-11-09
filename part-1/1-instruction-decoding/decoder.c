@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util/preamble.h"
-#include "../../util/virtual_arena/virtual_arena.h"
 
 // void decode_instruction(u32 instruction) {
 //

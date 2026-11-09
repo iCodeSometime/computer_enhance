@@ -10,6 +10,6 @@ typedef struct file {
     char* data;
 } file;
 
-file load_file(const char* path);
+file load_file(const char* file_path);
 
 #endif //FILE_LOADER_H

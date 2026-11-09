@@ -1,6 +1,7 @@
 #ifndef VIRTUAL_ARENA_H
 #define VIRTUAL_ARENA_H
 
+#include "util/preamble.h"
 // aarch64-macos page size
 #define PAGE_SIZE 16384
 
@@ -18,7 +19,7 @@ typedef struct virtual_arena {
  * @param size How big should the arena be - pages are only committed as needed.
  * @return The new arena.
  */
-virtual_arena* create_arena(size_t size);
+virtual_arena* create_arena(u64 size);
 
 /**
  * Allocate some bytes in the arena.
@@ -29,8 +30,7 @@ virtual_arena* create_arena(size_t size);
  *                  Typically, 2, 4, 8, 16. 64 puts it at the start of a cache-line.
  * @return A pointer to allocated bytes.
  */
-void* allocate_bytes(virtual_arena* arena, size_t size, size_t alignment);
-
+void* allocate_bytes(virtual_arena* arena, u64 size, u64 alignment);
 void destroy_arena(virtual_arena* arena);
 
 #endif //VIRTUAL_ARENA_H

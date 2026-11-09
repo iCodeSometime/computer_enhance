@@ -10,17 +10,6 @@
 #include "tests.h"
 #include "../virtual_arena/virtual_arena.h"
 
-static sigjmp_buf g_fault_jmp;
-static volatile sig_atomic_t g_in_test = 0;
-
-static void on_fault(int sig) {
-    if (g_in_test) {
-        siglongjmp(g_fault_jmp, sig);
-    }
-    signal(sig, SIG_DFL);
-    raise(sig);
-}
-
 static void expect_aligned(void* p, size_t alignment) {
     EXPECT(p != NULL);
     EXPECT((uintptr_t)p % alignment == 0);
@@ -31,19 +20,6 @@ static void release_arena(virtual_arena* arena, size_t size) {
     if (arena != NULL) {
         munmap(arena, size);
     }
-}
-
-static void run_test(void (*fn)(void), const char* name) {
-    printf("-- %s\n", name);
-    g_in_test = 1;
-    const int fault = sigsetjmp(g_fault_jmp, 1);
-    if (fault == 0) {
-        fn();
-    } else {
-        g_failed++;
-        fprintf(stderr, "FAIL %s: signal %d\n", name, fault);
-    }
-    g_in_test = 0;
 }
 
 static void test_create_and_reject_empty(void) {
@@ -285,12 +261,7 @@ static void test_unaligned_reservation_size(void) {
 }
 
 int run_virtual_arena_tests(void) {
-    struct sigaction action;
-    memset(&action, 0, sizeof(action));
-    action.sa_handler = on_fault;
-    sigemptyset(&action.sa_mask);
-    sigaction(SIGSEGV, &action, NULL);
-    sigaction(SIGBUS, &action, NULL);
+    prepare_tests("virtual_arena_tests");
 
     run_test(test_create_and_reject_empty, "create arena, reject zero size");
     run_test(test_bump_is_contiguous, "bump pointer is contiguous");
@@ -306,6 +277,6 @@ int run_virtual_arena_tests(void) {
     run_test(test_fresh_allocations_are_aligned, "fresh allocations are aligned to their size");
     run_test(test_alignment_after_one_byte, "alignment holds after a one-byte allocation");
 
-    printf("%d passed, %d failed\n", g_passed, g_failed);
+    printf("%llu passed, %llu failed\n", g_passed, g_failed);
     return g_failed == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
