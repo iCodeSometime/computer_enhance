@@ -7,3 +7,9 @@
 void run_util_tests(void) {
     run_virtual_arena_tests();
 }
+
+#ifndef AGGREGATE_TESTS
+int main(void) {
+    run_util_tests();
+}
+#endif

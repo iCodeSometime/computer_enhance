@@ -11,11 +11,9 @@
 #include <sys/mman.h>
 
 
-#include "util/preamble.h"
 #include "util/virtual_arena/virtual_arena.h"
 
 #include "instruction_set.h"
-#include "../../../../../../../Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/stdalign.h"
 #include "util/file_loader/file_loader.h"
 
 #define SKIP_UNTIL_AFTER(data, pattern, end) \
@@ -161,7 +159,7 @@ static char* parse_classes(char* data, instruction* inst, const instruction_allo
                 memcpy(inst->bits, bits, 32);
                 data = parse_encoding(data, inst, allocators, end_of_class);
 
-                instruction* allocated_instruction = allocate_bytes(allocators.instruction_allocator, sizeof(instruction), alignof(char*));
+                instruction* allocated_instruction = allocate_bytes(allocators.instruction_allocator, sizeof(instruction), sizeof(char*));
                 *allocated_instruction = *inst;
                 *parsedCount += 1;
 
@@ -170,7 +168,7 @@ static char* parse_classes(char* data, instruction* inst, const instruction_allo
 
         }
         else {
-            instruction* allocated_instruction = allocate_bytes(allocators.instruction_allocator, sizeof(instruction), alignof(char*));
+            instruction* allocated_instruction = allocate_bytes(allocators.instruction_allocator, sizeof(instruction), sizeof(char*));
             *allocated_instruction = *inst;
             *parsedCount += 1;
         }

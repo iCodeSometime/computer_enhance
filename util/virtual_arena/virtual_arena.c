@@ -31,7 +31,7 @@ static void* commit_enough_pages_for(void* page_start, const size_t bytes) {
     return page_start + (PAGE_SIZE * pages_needed);
 }
 
-virtual_arena* create_arena(const size_t requested_size) {
+virtual_arena* create_arena(const u64 requested_size) {
     const size_t size = get_page_count(requested_size) * PAGE_SIZE;
 
     void* reservation_start = mmap(NULL, size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -54,7 +54,7 @@ virtual_arena* create_arena(const size_t requested_size) {
     return arena;
 }
 
-void* allocate_bytes(virtual_arena* arena, const size_t size, const size_t alignment) {
+void* allocate_bytes(virtual_arena* arena, const u64 size, const u64 alignment) {
     void* granted_address = (void*)align_up((uptr)arena->current_address, alignment);
     void* allocation_end = granted_address + size;
     if (allocation_end > arena->end_address) {

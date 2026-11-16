@@ -117,7 +117,7 @@ static void get_masks(u32* array, u32 shift) {
         0b0000 << shift,
     };
 
-    memcpy(array, mask_updates, 16);
+    memcpy(array, mask_updates, sizeof(mask_updates));
 }
 
 static char* get_name_from_mask(u32 significance_mask, u32 ones_mask, char data[33]) {
@@ -149,6 +149,7 @@ static decision_tree_node* build_decision_tree_internal(instruction* instruction
     parent_node->ones_mask = ones_mask;
     parent_node->significance_mask = relevant_mask;
     parent_node->mnemonic = NULL;
+    decision_tree_node* previous_sibling = NULL;
 
     for (u32 i = 0; i < 16; i++) {
         u32 current_significance_mask = significance_masks[i];
@@ -157,13 +158,12 @@ static decision_tree_node* build_decision_tree_internal(instruction* instruction
         u32 matching_significance_count = 0;
         for (u32 cur = 0; cur < relevant_indices_count; cur++) {
             u32 current_index = relevant_indices[cur];
-            if ((masks->significance_masks[current_index] & current_significance_mask) == current_significance_mask) {
-                *((u32*)allocate_bytes(relevant_indices_allocator, sizeof(u32*), sizeof(u32*))) = current_index;
+            if ((masks->significance_masks[current_index] & (0xF << shift)) == current_significance_mask) {
+                *((u32*)allocate_bytes(relevant_indices_allocator, sizeof(u32), sizeof(u32))) = current_index;
                 matching_significance_count++;
             }
         }
 
-        decision_tree_node* previous_sibling = NULL;
         for (u32 j = 0; j < 16; j++) {
             u32 current_ones_mask = ones_masks[j];
 
@@ -173,7 +173,7 @@ static decision_tree_node* build_decision_tree_internal(instruction* instruction
                 u32 current_index = matching_significance_items[cur];
 
                 if ((masks->ones_masks[current_index] & current_significance_mask) == current_ones_mask) {
-                    *((u32*)allocate_bytes(relevant_indices_allocator, sizeof(u32*), sizeof(u32*))) = current_index;
+                    *((u32*)allocate_bytes(relevant_indices_allocator, sizeof(u32*), sizeof(u32))) = current_index;
                     new_relevant_items_count++;
                 }
             }
@@ -192,6 +192,7 @@ static decision_tree_node* build_decision_tree_internal(instruction* instruction
                 decision_tree_node* node = build_decision_tree_internal(instructions, masks, new_relevant_items, new_relevant_items_count, current_significance_mask, current_ones_mask, shift + 4, relevant_indices_allocator, node_allocator, general_allocator);
 
                 node->next_sibling = previous_sibling;
+                previous_sibling = node;
             }
         }
         parent_node->first_child = previous_sibling;
@@ -213,44 +214,3 @@ static decision_tree_node* build_decision_tree(instruction* instructions, instru
     return build_decision_tree_internal(instructions, masks, initial_relevant_indices, instruction_count, 0, 0, 0, relevant_indices_allocator, node_allocator, general_allocator);
 }
 
-
-/*
-* 00
-* 01
-* 10
-* 0x
-* 1x
-* x0
-* x1
-* xx
-*
-* 11
-* 11
-* 11
-* 10
-* 10
-* 01
-* 01
-* 00
-*
-* 00
-* 01
-* 10
-* 00
-* 10
-* 00
-* 01
-* 00
-*/
-
-/*
-* 00
-* 01
-* 10
-*
-* 0x
-* 1x
-* x0
-* x1
-* xx
-*/

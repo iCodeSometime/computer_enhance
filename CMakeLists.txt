@@ -20,3 +20,11 @@ add_executable(tests
 target_link_libraries(tests PRIVATE
     util
 )
+
+target_compile_definitions(tests PRIVATE AGGREGATE_TESTS)
+add_custom_target(test_all
+    COMMAND tests
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    USES_TERMINAL
+    COMMENT "Building and running all tests"
+)

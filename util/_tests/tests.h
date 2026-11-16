@@ -7,6 +7,9 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <signal.h>
+#include <setjmp.h>
+#include <string.h>
 
 #include "util/preamble.h"
 

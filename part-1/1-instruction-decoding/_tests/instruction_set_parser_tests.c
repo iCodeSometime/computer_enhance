@@ -724,8 +724,6 @@ static void parse_all(instruction_allocators* allocators) {
     EXPECT(glob(XML_PATH("*.xml"), GLOB_ERR | GLOB_NOSORT, NULL, &files) == 0);
 
     for (size_t i = 0; i < files.gl_pathc; i++) {
-        printf(" - %s\n", files.gl_pathv[i]);
-
         instruction* instructions = allocate_bytes(allocators->instruction_allocator, 0, 32);
         u8 instruction_count = parse_instructions(files.gl_pathv[i], *allocators);
 
@@ -737,7 +735,6 @@ static void parse_all(instruction_allocators* allocators) {
                 EXPECT(instructions[j].bits[b] == '1' || instructions[j].bits[b] == '0' || instructions[j].bits[b] == 'x');
             }
         }
-
     }
 }
 

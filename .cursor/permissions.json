@@ -1,0 +1,15 @@
+{
+  "autoRun": {
+    "allow_instructions": [
+      "Allow read-only inspection of this project: listing, searching, reading files, git status/diff/log.",
+      "Allow debugging, running tests, and builds that investigate behavior without editing project source or config.",
+      "Allow printing help, versions, and compiler/debugger diagnostic output."
+    ],
+    "block_instructions": [
+      "Require approval for any command that creates, modifies, deletes, moves, or renames project source or config files.",
+      "Require approval for any git write: add, commit, push, pull, checkout, merge, rebase, reset, stash, tag, or amending history.",
+      "Require approval for package installs, dependency changes, or editing CMake/project settings.",
+      "Prefer blocking automated edits; this project is suggestion-only for the agent—the user applies changes."
+    ]
+  }
+}

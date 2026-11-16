@@ -6,7 +6,7 @@
 #define INSTRUCTION_SET_H
 
 #include "util/virtual_arena/virtual_arena.h"
-#define XML_PATH(path) "../part-1/1-instruction-decoding/instruction_set/data/ISA_A64/" path
+#define XML_PATH(path) "part-1/1-instruction-decoding/instruction_set/data/ISA_A64/" path
 
 // todo: is it useful to have sections here?
 typedef struct instruction {
