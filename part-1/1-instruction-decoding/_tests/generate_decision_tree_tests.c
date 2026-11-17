@@ -228,8 +228,7 @@ static void test_decision_tree_distinguishes_low_nibble(void) {
     EXPECT(root != NULL);
     EXPECT(root->first_child != NULL);
 
-    // Must terminate within one node per nibble (+ root).
-    EXPECT(max_depth(root) <= 9);
+    EXPECT(max_depth(root) <= 2);
 
     EXPECT(count_leaves_with_mnemonic(root, "A") >= 1);
     EXPECT(count_leaves_with_mnemonic(root, "B") >= 1);

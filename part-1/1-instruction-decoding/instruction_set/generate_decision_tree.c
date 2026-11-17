@@ -150,37 +150,37 @@ static decision_tree_node* build_decision_tree_internal(instruction* instruction
     parent_node->significance_mask = relevant_mask;
     parent_node->mnemonic = NULL;
     decision_tree_node* previous_sibling = NULL;
-
     for (u32 i = 0; i < 16; i++) {
-        u32 current_significance_mask = significance_masks[i];
+        u32 current_significance_mask = significance_masks[i] | relevant_mask;
 
-        u32* matching_significance_items = allocate_bytes(relevant_indices_allocator, 0, sizeof(u32*));
+        u32* matching_significance_items = allocate_bytes(relevant_indices_allocator, 0, sizeof(u32));
         u32 matching_significance_count = 0;
         for (u32 cur = 0; cur < relevant_indices_count; cur++) {
             u32 current_index = relevant_indices[cur];
-            if ((masks->significance_masks[current_index] & (0xF << shift)) == current_significance_mask) {
+            if ((masks->significance_masks[current_index] & ((0xF << shift) | relevant_mask)) == current_significance_mask) {
                 *((u32*)allocate_bytes(relevant_indices_allocator, sizeof(u32), sizeof(u32))) = current_index;
                 matching_significance_count++;
             }
         }
+        if (matching_significance_count == 0) continue;
 
         for (u32 j = 0; j < 16; j++) {
-            u32 current_ones_mask = ones_masks[j];
+            u32 current_ones_mask = ones_masks[j] | ones_mask;
 
-            u32* new_relevant_items = allocate_bytes(relevant_indices_allocator, 0, sizeof(u32*));
+            u32* new_relevant_items = allocate_bytes(relevant_indices_allocator, 0, sizeof(u32));
             u32 new_relevant_items_count = 0;
             for (u32 cur = 0; cur < matching_significance_count; cur++) {
                 u32 current_index = matching_significance_items[cur];
 
                 if ((masks->ones_masks[current_index] & current_significance_mask) == current_ones_mask) {
-                    *((u32*)allocate_bytes(relevant_indices_allocator, sizeof(u32*), sizeof(u32))) = current_index;
+                    *((u32*)allocate_bytes(relevant_indices_allocator, sizeof(u32), sizeof(u32))) = current_index;
                     new_relevant_items_count++;
                 }
             }
 
             if (new_relevant_items_count == 0) continue;
             else if (new_relevant_items_count == 1) {
-                decision_tree_node* node = allocate_bytes(node_allocator, sizeof(decision_tree_node), sizeof(u32*));
+                decision_tree_node* node = allocate_bytes(node_allocator, sizeof(decision_tree_node), sizeof(char*));
                 node->first_child = NULL;
                 node->mnemonic = instructions[*new_relevant_items].mnemonic;
                 node->name = node->mnemonic;
